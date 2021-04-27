@@ -101,7 +101,7 @@ paths:
       description: Update a existing customer
       operationId: update-customer
       parameters:
-        - name: id
+        - name: customerId
           in: path
           description: The customer externalRefNumber
           required: true
@@ -237,7 +237,6 @@ paths:
         name: contactId
         in: path
         required: true
-        description: The contact id
     put:
       summary: update-contact
       tags:
@@ -274,12 +273,6 @@ paths:
           description: Not Found
       operationId: delete-contact
       description: Delete a contact
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties: {}
 components:
   schemas:
     Customer:
