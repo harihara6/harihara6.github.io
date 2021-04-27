@@ -81,6 +81,8 @@ paths:
           content: {}
       x-codegen-request-body-name: Customer
     delete:
+      tags:
+        - Customer
       summary: ''
       operationId: delete-customer
       responses:
