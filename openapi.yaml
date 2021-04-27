@@ -5,6 +5,9 @@ info:
     at [http://swagger.io](http://swagger.io) or on [irc.freenode.net, #swagger](http://swagger.io/irc/).      For
     this sample, you can use the api key `special-key` to test the authorization     filters.'
   termsOfService: http://swagger.io/terms/
+  x-logo:
+    url: 'https://assets.dorik.com/5fa7a91326674600114e7aca/images/logo_black_zv0e3kxb.png'
+    altText: Petstore logo
   contact:
     email: apiteam@swagger.io
   license:
