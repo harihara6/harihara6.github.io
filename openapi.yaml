@@ -17,15 +17,15 @@ externalDocs:
 servers:
   - url: 'https://virtserver.swaggerhub.com/hari3/customer/1.0.0'
 tags:
-  - name: Customer
+  - name: Customers
     description: The customer
-  - name: Contact
+  - name: Contacts
     description: The customers contact
 paths:
-  /customer:
+  /customers:
     post:
       tags:
-        - Customer
+        - Customers
       summary: Add a customer
       description: Add a new customer
       operationId: add-customer
@@ -35,23 +35,68 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Customer'
+            examples:
+              Example:
+                value:
+                  companyName: Mc win pte ltd
+                  externalRefNumber: 1245a32
+                  currency: USD
+                  status: unknown
+                  parentCompanyId: string
+                  accountManagerId: string
+                  registrationNumber: string
+                  taxNumber: string
+                  notes: string
+                  creditAmountMax: 100000
+                  creditDaysMax: 20
+                  pauseWorkflow: false
+                  contact:
+                    - firstName: Peter
+                      lastName: Wong
+                      email: peterwong@mcwin.com
+                      phone: '6591234567'
+                      isMainContact: false
         required: false
       responses:
         '201':
           description: customer created
-          content: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+              examples:
+                Example:
+                  value:
+                    companyName: Mc win pte ltd
+                    externalRefNumber: 1245a32
+                    currency: USD
+                    status: unknown
+                    parentCompanyId: string
+                    accountManagerId: string
+                    registrationNumber: string
+                    taxNumber: string
+                    notes: string
+                    creditAmountMax: 100000
+                    creditDaysMax: 20
+                    pauseWorkflow: false
+                    contact:
+                      - firstName: Peter
+                        lastName: Wong
+                        email: peterwong@mcwin.com
+                        phone: '6591234567'
+                        isMainContact: false
         '400':
-          description: 'invalid input, object invalid'
+          description: Invalid input
           content: {}
         '409':
-          description: an existing customer already exists
+          description: Customer already exists
           content: {}
       x-codegen-request-body-name: Customer
     parameters: []
-  '/customer/{id}':
+  '/customers/{customerId}':
     put:
       tags:
-        - Customer
+        - Customers
       summary: 'Update a customer '
       description: Update a existing customer
       operationId: update-customer
@@ -68,32 +113,173 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Customer'
+            examples:
+              Example:
+                value:
+                  companyName: Mc win pte ltd
+                  externalRefNumber: 1245a32
+                  currency: USD
+                  status: unknown
+                  parentCompanyId: string
+                  accountManagerId: string
+                  registrationNumber: string
+                  taxNumber: string
+                  notes: string
+                  creditAmountMax: 45000
+                  creditDaysMax: 20
+                  pauseWorkflow: false
+                  contact:
+                    - firstName: Peter
+                      lastName: Wong
+                      email: peterwong@mcwin.com
+                      phone: '6591234567'
+                      isMainContact: false
         required: false
       responses:
-        '201':
-          description: customer updated
-          content: {}
+        '200':
+          description: Updated customer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+              examples:
+                Example:
+                  value:
+                    companyName: Mc win pte ltd
+                    externalRefNumber: 1245a32
+                    currency: USD
+                    status: unknown
+                    parentCompanyId: string
+                    accountManagerId: string
+                    registrationNumber: string
+                    taxNumber: string
+                    notes: string
+                    creditAmountMax: 45000
+                    creditDaysMax: 20
+                    pauseWorkflow: false
+                    contact:
+                      - firstName: Peter
+                        lastName: Wong
+                        email: peterwong@mcwin.com
+                        phone: '6591234567'
+                        isMainContact: false
         '400':
-          description: 'invalid input, object invalid'
+          description: Bad request
           content: {}
+        '404':
+          description: Not Found
         '409':
-          description: customer doesnot exist
+          description: Customer doesnot exist
           content: {}
       x-codegen-request-body-name: Customer
     delete:
       tags:
-        - Customer
+        - Customers
       summary: ''
       operationId: delete-customer
       responses:
-        '200':
-          description: OK
+        '204':
+          description: No Content
+        '404':
+          description: Not Found
+      description: Delete a customer
     parameters:
       - schema:
           type: string
-        name: id
+        name: customerId
         in: path
         required: true
+  /contacts:
+    post:
+      summary: add-contact
+      tags:
+        - Contacts
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Contact'
+              examples:
+                Example:
+                  value:
+                    firstName: Peter
+                    lastName: Wong
+                    email: peterwong@mcwin.com
+                    phone: '6591234567'
+                    isMainContact: false
+        '400':
+          description: Bad Request
+        '409':
+          description: Conflict
+      operationId: add-contact
+      description: Add a contact to existing customer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Contact'
+            examples:
+              Example:
+                value:
+                  firstName: Peter
+                  lastName: Wong
+                  email: peterwong@mcwin.com
+                  phone: '6591234567'
+                  isMainContact: false
+        description: Contact to add
+    parameters: []
+  '/contacts/{contactId}':
+    parameters:
+      - schema:
+          type: string
+        name: contactId
+        in: path
+        required: true
+        description: The contact id
+    put:
+      summary: update-contact
+      tags:
+        - Contacts
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Contact'
+              examples:
+                Example:
+                  value:
+                    firstName: Peter
+                    lastName: Wong
+                    email: peterwong@mcwin.com
+                    phone: '6591234567'
+                    isMainContact: false
+        '404':
+          description: Not Found
+        '409':
+          description: Conflict
+      operationId: update-contact
+      description: Update a contact
+    delete:
+      summary: delete-contact
+      tags:
+        - Contacts
+      responses:
+        '204':
+          description: No Content
+        '404':
+          description: Not Found
+      operationId: delete-contact
+      description: Delete a contact
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: {}
 components:
   schemas:
     Customer:
