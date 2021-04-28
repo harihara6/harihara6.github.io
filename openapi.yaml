@@ -45,7 +45,7 @@ paths:
               Example:
                 value:
                   companyName: Mc win pte ltd
-                  externalRefNumber: 1245a32
+                  externalId: 1245a32
                   currency: USD
                   status: active
                   parentCompanyId: 23oc2344
@@ -54,15 +54,16 @@ paths:
                   creditDaysMax: 20
                   pauseWorkflow: false
                   contact:
-                    - firstName: Peter
+                    - externalId: 234wf33
+                      firstName: Peter
                       lastName: Wong
                       email: peterwong@mcwin.com
                       phone: '6591234567'
                       isMainContact: false
         required: false
       responses:
-        '201':
-          description: customer created
+        '200':
+          description: OK
           content:
             application/json:
               schema:
@@ -71,7 +72,7 @@ paths:
                 Example:
                   value:
                     companyName: Mc win pte ltd
-                    externalRefNumber: 1245a32
+                    externalId: 1245a32
                     currency: USD
                     status: active
                     parentCompanyId: 23oc2344
@@ -80,16 +81,17 @@ paths:
                     creditDaysMax: 20
                     pauseWorkflow: false
                     contact:
-                      - firstName: Peter
+                      - externalId: 234wf33
+                        firstName: Peter
                         lastName: Wong
                         email: peterwong@mcwin.com
                         phone: '6591234567'
                         isMainContact: false
         '400':
-          description: Invalid input
+          description: Bad request
           content: {}
         '409':
-          description: Customer already exists
+          description: Conflict
           content: {}
       x-codegen-request-body-name: Customer
     parameters: []
@@ -117,7 +119,7 @@ paths:
               Example:
                 value:
                   companyName: Mc win pte ltd
-                  externalRefNumber: 1245a32
+                  externalId: 1245a32
                   currency: USD
                   status: active
                   parentCompanyId: 23oc2344
@@ -126,7 +128,8 @@ paths:
                   creditDaysMax: 20
                   pauseWorkflow: false
                   contact:
-                    - firstName: Peter
+                    - externalId: 234wf33
+                      firstName: Peter
                       lastName: Wong
                       email: peterwong@mcwin.com
                       phone: '6591234567'
@@ -143,7 +146,7 @@ paths:
                 Example:
                   value:
                     companyName: Mc win pte ltd
-                    externalRefNumber: 1245a32
+                    externalId: 1245a32
                     currency: USD
                     status: active
                     parentCompanyId: 23oc2344
@@ -152,24 +155,22 @@ paths:
                     creditDaysMax: 20
                     pauseWorkflow: false
                     contact:
-                      - firstName: Peter
+                      - externalId: 234wf33
+                        firstName: Peter
                         lastName: Wong
                         email: peterwong@mcwin.com
                         phone: '6591234567'
                         isMainContact: false
-        '400':
-          description: Bad request
-          content: {}
         '404':
           description: Not Found
         '409':
-          description: Customer doesnot exist
+          description: Conflict
           content: {}
       x-codegen-request-body-name: Customer
     delete:
       tags:
         - Customers
-      summary: ''
+      summary: Delete a customer
       operationId: delete-customer
       responses:
         '204':
@@ -186,7 +187,7 @@ paths:
         description: The customer externalRefNumber
   '/customers/{customerId}/contacts':
     post:
-      summary: add-contact
+      summary: Add a contact
       tags:
         - Contacts
       responses:
@@ -199,13 +200,14 @@ paths:
               examples:
                 Example:
                   value:
+                    externalId: 234wf33
                     firstName: Peter
                     lastName: Wong
                     email: peterwong@mcwin.com
                     phone: '6591234567'
                     isMainContact: false
         '400':
-          description: Bad Request
+          description: 'Bad Request '
         '409':
           description: Conflict
       operationId: add-contact
@@ -218,6 +220,7 @@ paths:
             examples:
               Example:
                 value:
+                  externalId: 234wf33
                   firstName: Peter
                   lastName: Wong
                   email: peterwong@mcwin.com
@@ -246,7 +249,7 @@ paths:
         required: true
         description: The customer externalRefNumber
     put:
-      summary: update-contact
+      summary: Update a contact
       tags:
         - Contacts
       responses:
@@ -259,6 +262,7 @@ paths:
               examples:
                 Example:
                   value:
+                    externalId: 234wf33
                     firstName: Peter
                     lastName: Wong
                     email: peterwong@mcwin.com
@@ -271,7 +275,7 @@ paths:
       operationId: update-contact
       description: Update a contact
     delete:
-      summary: delete-contact
+      summary: Delete a contact
       tags:
         - Contacts
       responses:
@@ -281,6 +285,217 @@ paths:
           description: Not Found
       operationId: delete-contact
       description: Delete a contact
+  /invoices:
+    post:
+      summary: Add an invoice
+      operationId: add-invoice
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '409':
+          description: Conflict
+      description: Add a new invoice
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Invoice'
+        description: The invoice to be added
+      tags:
+        - Invoices
+    parameters: []
+  '/invoices/{invoiceId}':
+    parameters:
+      - schema:
+          type: string
+        name: invoiceId
+        in: path
+        required: true
+        description: The invoice Id
+    put:
+      summary: Update an invoice
+      operationId: update-invoice
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Invoice'
+        '404':
+          description: Not Found
+        '409':
+          description: Conflict
+      description: Update an invoice
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Invoice'
+        description: The invoice to update
+      tags:
+        - Invoices
+    delete:
+      tags:
+        - Invoices
+      summary: Delete an invoice
+      operationId: delete-invoice
+      responses:
+        '204':
+          description: No Content
+        '404':
+          description: Not Found
+      description: Delete an invoice
+  '/invoices/{invoiceId}/attachments':
+    parameters:
+      - schema:
+          type: string
+        name: invoiceId
+        in: path
+        required: true
+        description: The invoiceId
+    put:
+      summary: Add an attachment to invoice
+      operationId: add-attachment
+      responses:
+        '200':
+          description: OK
+      tags:
+        - Invoices
+      description: Add an attachment to invoice
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Attachment'
+  /creditnotes:
+    post:
+      tags:
+        - Credit Notes
+      summary: Add a credit note
+      operationId: add-creditnotes
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreditNote'
+        '400':
+          description: Bad Request
+        '409':
+          description: Conflict
+      description: Add a credit note
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreditNote'
+        description: The credit note to add
+  '/creditnote/{creditNoteId}':
+    parameters:
+      - schema:
+          type: string
+        name: creditNoteId
+        in: path
+        required: true
+        description: The credit note Id
+    put:
+      tags:
+        - Credit Notes
+      summary: Update a credit note
+      operationId: update-creditnote
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreditNote'
+        '404':
+          description: Not Found
+        '409':
+          description: Conflict
+      description: Update a credit note
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreditNote'
+        description: The credit note to update
+    delete:
+      summary: Delete a credit note
+      operationId: delete-creditnote
+      responses:
+        '200':
+          description: OK
+      tags:
+        - Credit Notes
+      description: Remove a credit note
+  /payments:
+    post:
+      summary: Add a payment
+      operationId: add-payment
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Payment'
+        '400':
+          description: Bad Request
+        '409':
+          description: Conflict
+      tags:
+        - Payments
+      description: Add a payment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Payment'
+        description: The payment to add
+  '/payments/{paymentId}':
+    parameters:
+      - schema:
+          type: string
+        name: paymentId
+        in: path
+        required: true
+        description: The payment Id
+    put:
+      summary: Update a payment
+      operationId: update-payment
+      responses:
+        '200':
+          description: OK
+        '404':
+          description: Not Found
+        '409':
+          description: Conflict
+      tags:
+        - Payments
+      description: Update a payment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Payment'
+        description: The payment to update
+    delete:
+      summary: Delete a payment
+      operationId: delete-payment
+      responses:
+        '204':
+          description: No Content
+        '404':
+          description: Not Found
+      tags:
+        - Payments
+      description: Delete a payment
 components:
   schemas:
     Customer:
@@ -308,12 +523,12 @@ components:
               isMainContact: false
       description: The customer model
       properties:
+        externalId:
+          type: string
+          description: The external Id of the company
         companyName:
           type: string
           description: The company name
-        externalRefNumber:
-          type: string
-          description: The company Id
         currency:
           type: string
           description: The customers currency. Must be a ISO 4217 code
@@ -357,26 +572,23 @@ components:
           type: string
           description: The statement file
         Address:
-          type:
-            - string
-            - array
+          type: array
           description: The customers addresses
           items:
             $ref: '#/components/schemas/Address'
       required:
         - companyName
-        - externalRefNumber
+        - externalId
         - currency
         - status
         - parentCompanyId
     Contact:
-      required:
-        - email
-        - firstName
-        - lastName
-        - phone
       type: object
+      description: The contact model
       properties:
+        externalId:
+          type: string
+          description: The external Id for the contact
         firstName:
           type: string
           description: The first name of the contact
@@ -398,7 +610,32 @@ components:
           type: boolean
           description: Indicate if this is the main contact.
           default: false
-      description: The contact model
+        title:
+          type: string
+          description: The title
+          example: Dr.
+        position:
+          type: string
+          enum:
+            - Sales
+            - Accounting
+            - Management
+            - Unknown
+          example: Sales
+          description: The postion of the contact in the company
+        description:
+          type: string
+          description: Description about contact
+        suffix:
+          type: string
+        altPhone:
+          type: string
+          description: Alternate phone number
+      required:
+        - externalId
+        - firstName
+        - lastName
+        - email
     LineItem:
       description: The line item
       type: object
@@ -406,9 +643,6 @@ components:
         description:
           type: string
           description: Description about line item
-        itemName:
-          type: string
-          description: Item name
         unitAmount:
           type: number
           description: Amount per unit for the line item
@@ -427,17 +661,22 @@ components:
         totalAmount:
           type: number
           description: The total amount
+        itemRef:
+          type: string
+          description: 'Reference to the product, service type, or inventory item, to which the line item is linked.'
       required:
-        - itemName
+        - description
         - unitAmount
         - quantity
+        - taxAmount
+        - itemRef
     Attachment:
       description: The attachment
       type: object
       properties:
-        id:
+        externalId:
           type: string
-          description: Unique attachment Id
+          description: The external Id for the attachment
         name:
           type: string
           description: 'Name of the attachment '
@@ -456,7 +695,7 @@ components:
         fileType:
           $ref: '#/components/schemas/FileType'
       required:
-        - id
+        - externalId
         - name
         - contentType
         - data
@@ -476,32 +715,27 @@ components:
       description: ''
       type: object
       properties:
-        invoiceId:
+        externalId:
           type: string
-          description: The invoiceId
+          description: The external Id of the invoice
         customerRef:
           type: string
-          minLength: 1
           description: The customer Ref or Id
         issueDate:
           type: string
-          minLength: 1
           description: Invoice issue date. Follow ISO8601 format
           example: '2021-04-28T12:30:00'
         dueDate:
           type: string
-          minLength: 1
           description: The invoice due date. Follow ISO8601 format
         modifiedDate:
           type: string
-          minLength: 1
           description: The invoice modified date. Follow ISO8601 format
         paidOnDate:
           description: The invoice paid date. Follow ISO8601 format
           type: string
         currency:
           type: string
-          minLength: 1
           description: The invoice currency. Follow ISO 4217 code
         currencyRate:
           type: number
@@ -532,6 +766,7 @@ components:
             - PartiallyPaid
             - Void
             - Paid
+            - Open
           example: Paid
           default: Draft
           description: The invoice status
@@ -544,10 +779,20 @@ components:
           description: The invoice attachments
           items:
             $ref: '#/components/schemas/Attachment'
+        expectedPaymentDate:
+          type: string
+          description: The expected payment date. Follow ISO8601 format
+        allocatedOnDate:
+          type: string
+          description: The allocated date. Follow ISO8601 format
+        subTotal:
+          type: number
+          description: The sub total
       required:
-        - invoiceId
+        - externalId
         - customerRef
         - issueDate
+        - dueDate
         - currency
         - totalAmount
     Address:
@@ -556,33 +801,183 @@ components:
       properties:
         type:
           type: string
-          minLength: 1
           description: The address type
         line1:
           type: string
-          minLength: 1
           description: The address line 1
         line2:
           type: string
-          minLength: 1
         city:
           type: string
-          minLength: 1
           description: The city
         region:
           type: string
-          minLength: 1
           description: The region
         country:
           type: string
-          minLength: 1
           description: The country
         postalCode:
           type: string
-          minLength: 1
           description: The postal code
       required:
         - line1
         - city
         - country
         - postalCode
+    CreditNote:
+      description: ''
+      type: object
+      properties:
+        externalId:
+          type: string
+          description: The externalId for the credit note
+        creditNoteNumber:
+          type: string
+          description: Human readable form of credit note
+        customerRef:
+          type: string
+          description: The customer Id
+        totalAmount:
+          type: number
+          description: The total amount
+        totalDiscount:
+          type: number
+          description: The total discount
+        subTotal:
+          type: number
+          description: The subtotal
+        totalTaxAmount:
+          type: number
+          description: The total tax amount
+        remainingCredit:
+          type: number
+          description: The remaining credit amount
+        status:
+          type: string
+          enum:
+            - Draft
+            - Submitted
+            - PartiallyPaid
+            - Void
+            - Paid
+          default: Draft
+          example: Paid
+          description: The status of credit note
+        issueDate:
+          type: string
+          description: The issue date. Follow ISO8601 format
+        allocatedOnDate:
+          type: string
+          description: The credit note allocated date. Follow ISO8601 format
+        currency:
+          type: string
+          description: The credit note currency. Follow ISO 4217 code
+        currencyRate:
+          type: number
+          description: The currency rate to use if the credit note currency is different from company default currency
+        lineItems:
+          type: array
+          items:
+            $ref: '#/components/schemas/LineItem'
+        modifiedDate:
+          type: string
+          description: Credit note last modified date. Follow ISO8601 format
+        note:
+          type: string
+      required:
+        - externalId
+        - creditNoteNumber
+        - customerRef
+        - totalAmount
+        - remainingCredit
+        - issueDate
+        - currency
+    Payment:
+      description: ''
+      type: object
+      properties:
+        id:
+          type: string
+          minLength: 1
+          description: The unique paymentId
+        customerRef:
+          type: string
+          minLength: 1
+          description: The customer Id
+        totalAmount:
+          type: number
+          description: Total amount
+        remainingAmount:
+          type: number
+          description: The amount that is not paid yet
+        currency:
+          type: string
+          minLength: 1
+          description: The currency of payment
+        currencyRate:
+          description: Currency rate to use to conver the amount to based currency of the company
+          type: number
+        date:
+          type: string
+          minLength: 1
+          description: The payment date.Follow ISO8601 format
+        paymentLines:
+          type: array
+          uniqueItems: true
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/PaymentLine'
+        attachments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Attachment'
+        modifiedDate:
+          type: string
+          minLength: 1
+          description: Date the record was last changed
+        reference:
+          type: string
+          minLength: 1
+        note:
+          type: string
+          minLength: 1
+          description: Notes related to this payment
+      required:
+        - id
+        - customerRef
+        - totalAmount
+        - remainingAmount
+        - currency
+        - date
+        - modifiedDate
+        - reference
+    PaymentLine:
+      description: The payment line
+      type: object
+      properties:
+        amount:
+          type: number
+          description: |-
+            Amount by which the balance of the linked entity is altered, in the currency of the linked entity.
+            A negative link amount reduces the outstanding amount on the accounts receivable account.
+            A positive link amount increases the outstanding amount on the accounts receivable account.
+        type:
+          type: string
+          description: Type of payment
+          enum:
+            - Invoice
+            - Refund
+          default: Invoice
+          example: Invoice
+        id:
+          type: string
+          description: Reference to the item to which the payment is made
+          example: Invoice Id if this is a invoice type payment
+        currencyRate:
+          type: number
+          description: 'Calculated as the amount of the payment allocated in the currency of the bill payment divided by the amount of the linked entity in the currency of the entity. When payment currencies and linked entity currencies are always the same, the currencyRate is 1.'
+      required:
+        - amount
+        - type
+        - id
+        - currencyRate
