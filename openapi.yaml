@@ -21,6 +21,12 @@ tags:
     description: The customer
   - name: Contacts
     description: The customers contact
+  - name: Invoices
+    description: The customers invoices
+  - name: Payments
+    description: The customers payments
+  - name: Credit Notes
+    description: The customers credit notes
 paths:
   /customers:
     post:
@@ -41,13 +47,10 @@ paths:
                   companyName: Mc win pte ltd
                   externalRefNumber: 1245a32
                   currency: USD
-                  status: unknown
-                  parentCompanyId: string
-                  accountManagerId: string
-                  registrationNumber: string
-                  taxNumber: string
-                  notes: string
-                  creditAmountMax: 100000
+                  status: active
+                  parentCompanyId: 23oc2344
+                  accountManagerId: df34lvifmfkfef34r333
+                  creditAmountMax: 10000
                   creditDaysMax: 20
                   pauseWorkflow: false
                   contact:
@@ -70,13 +73,10 @@ paths:
                     companyName: Mc win pte ltd
                     externalRefNumber: 1245a32
                     currency: USD
-                    status: unknown
-                    parentCompanyId: string
-                    accountManagerId: string
-                    registrationNumber: string
-                    taxNumber: string
-                    notes: string
-                    creditAmountMax: 100000
+                    status: active
+                    parentCompanyId: 23oc2344
+                    accountManagerId: df34lvifmfkfef34r333
+                    creditAmountMax: 10000
                     creditDaysMax: 20
                     pauseWorkflow: false
                     contact:
@@ -98,7 +98,7 @@ paths:
       tags:
         - Customers
       summary: 'Update a customer '
-      description: Update a existing customer
+      description: Update an existing customer
       operationId: update-customer
       parameters:
         - name: customerId
@@ -119,12 +119,9 @@ paths:
                   companyName: Mc win pte ltd
                   externalRefNumber: 1245a32
                   currency: USD
-                  status: unknown
-                  parentCompanyId: string
-                  accountManagerId: string
-                  registrationNumber: string
-                  taxNumber: string
-                  notes: string
+                  status: active
+                  parentCompanyId: 23oc2344
+                  accountManagerId: df34lvifmfkfef34r333
                   creditAmountMax: 45000
                   creditDaysMax: 20
                   pauseWorkflow: false
@@ -148,12 +145,9 @@ paths:
                     companyName: Mc win pte ltd
                     externalRefNumber: 1245a32
                     currency: USD
-                    status: unknown
-                    parentCompanyId: string
-                    accountManagerId: string
-                    registrationNumber: string
-                    taxNumber: string
-                    notes: string
+                    status: active
+                    parentCompanyId: 23oc2344
+                    accountManagerId: df34lvifmfkfef34r333
                     creditAmountMax: 45000
                     creditDaysMax: 20
                     pauseWorkflow: false
@@ -189,7 +183,8 @@ paths:
         name: customerId
         in: path
         required: true
-  /contacts:
+        description: The customer externalRefNumber
+  '/customers/{customerId}/contacts':
     post:
       summary: add-contact
       tags:
@@ -229,14 +224,27 @@ paths:
                   phone: '6591234567'
                   isMainContact: false
         description: Contact to add
-    parameters: []
-  '/contacts/{contactId}':
+    parameters:
+      - schema:
+          type: string
+        name: customerId
+        in: path
+        required: true
+        description: The customer externalRefNumber
+  '/customers/{customerId}/contacts/{contactId}':
     parameters:
       - schema:
           type: string
         name: contactId
         in: path
         required: true
+        description: The Id of the contact to update or delete
+      - schema:
+          type: string
+        name: customerId
+        in: path
+        required: true
+        description: The customer externalRefNumber
     put:
       summary: update-contact
       tags:
@@ -278,11 +286,11 @@ components:
     Customer:
       type: object
       x-examples:
-        example:
+        Example:
           companyName: string
           externalRefNumber: string
-          currency: string
-          status: string
+          currency: USD
+          status: active
           parentCompanyId: string
           accountManagerId: string
           registrationNumber: string
@@ -312,12 +320,17 @@ components:
         status:
           type: string
           description: The status of the company
+          enum:
+            - unknow
+            - active
+            - archived
+          example: active
         parentCompanyId:
           type: string
           description: The customers parent companyId
         accountManagerId:
           type: string
-          description: The account manager Id
+          description: The account manager Id for the customer
         registrationNumber:
           type: string
           description: The company registration number
@@ -340,11 +353,22 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Contact'
+        statementFile:
+          type: string
+          description: The statement file
+        Address:
+          type:
+            - string
+            - array
+          description: The customers addresses
+          items:
+            $ref: '#/components/schemas/Address'
       required:
         - companyName
         - externalRefNumber
         - currency
         - status
+        - parentCompanyId
     Contact:
       required:
         - email
@@ -375,3 +399,190 @@ components:
           description: Indicate if this is the main contact.
           default: false
       description: The contact model
+    LineItem:
+      description: The line item
+      type: object
+      properties:
+        description:
+          type: string
+          description: Description about line item
+        itemName:
+          type: string
+          description: Item name
+        unitAmount:
+          type: number
+          description: Amount per unit for the line item
+        quantity:
+          type: number
+          description: 'Number of units '
+        discountAmount:
+          type: number
+          description: Discount on total amount
+        subTotal:
+          type: number
+          description: The Subtotal
+        taxAmount:
+          type: number
+          description: The tax amount
+        totalAmount:
+          type: number
+          description: The total amount
+      required:
+        - itemName
+        - unitAmount
+        - quantity
+    Attachment:
+      description: The attachment
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique attachment Id
+        name:
+          type: string
+          description: 'Name of the attachment '
+        dateCreated:
+          type: string
+          description: The date at which the attachment created. Follow ISO 8601 format
+        contentType:
+          type: string
+          description: Content type of attachment
+        fileSize:
+          type: number
+          description: The size of attachment
+        data:
+          type: string
+          description: The attachment data
+        fileType:
+          $ref: '#/components/schemas/FileType'
+      required:
+        - id
+        - name
+        - contentType
+        - data
+    FileType:
+      title: FileType
+      type: string
+      enum:
+        - cabinet
+        - invoice
+        - statement
+        - transaction
+        - other
+      description: The supported file types
+      x-examples:
+        Example: Invoice
+    Invoice:
+      description: ''
+      type: object
+      properties:
+        invoiceId:
+          type: string
+          description: The invoiceId
+        customerRef:
+          type: string
+          minLength: 1
+          description: The customer Ref or Id
+        issueDate:
+          type: string
+          minLength: 1
+          description: Invoice issue date. Follow ISO8601 format
+          example: '2021-04-28T12:30:00'
+        dueDate:
+          type: string
+          minLength: 1
+          description: The invoice due date. Follow ISO8601 format
+        modifiedDate:
+          type: string
+          minLength: 1
+          description: The invoice modified date. Follow ISO8601 format
+        paidOnDate:
+          description: The invoice paid date. Follow ISO8601 format
+          type: string
+        currency:
+          type: string
+          minLength: 1
+          description: The invoice currency. Follow ISO 4217 code
+        currencyRate:
+          type: number
+          description: The currency rate to convert currency to base currency
+        lineItems:
+          type: array
+          uniqueItems: true
+          description: The invoice line items
+          items:
+            $ref: '#/components/schemas/LineItem'
+        totalAmount:
+          type: number
+          description: The total invoice amount
+        totalDiscount:
+          type: number
+          description: Discount on invoice total amount
+        totalTaxAmount:
+          type: number
+          description: Total tax amount on invoice
+        amountDue:
+          type: number
+          description: Amount due on invoice
+        status:
+          type: string
+          enum:
+            - Draft
+            - Submitted
+            - PartiallyPaid
+            - Void
+            - Paid
+          example: Paid
+          default: Draft
+          description: The invoice status
+        note:
+          type: string
+          description: Notes about invoice
+        attachments:
+          type: array
+          uniqueItems: true
+          description: The invoice attachments
+          items:
+            $ref: '#/components/schemas/Attachment'
+      required:
+        - invoiceId
+        - customerRef
+        - issueDate
+        - currency
+        - totalAmount
+    Address:
+      description: The customers address
+      type: object
+      properties:
+        type:
+          type: string
+          minLength: 1
+          description: The address type
+        line1:
+          type: string
+          minLength: 1
+          description: The address line 1
+        line2:
+          type: string
+          minLength: 1
+        city:
+          type: string
+          minLength: 1
+          description: The city
+        region:
+          type: string
+          minLength: 1
+          description: The region
+        country:
+          type: string
+          minLength: 1
+          description: The country
+        postalCode:
+          type: string
+          minLength: 1
+          description: The postal code
+      required:
+        - line1
+        - city
+        - country
+        - postalCode
